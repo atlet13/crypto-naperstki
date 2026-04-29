@@ -1,6 +1,7 @@
 {
   "name": "crypto-naperstki",
   "version": "1.0.0",
+  "description": "TON Крипто Наперстки Mini App",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
