@@ -40,7 +40,7 @@
     <!-- HEADER -->
     <div class="fixed top-0 left-0 right-0 bg-black/90 border-b border-yellow-400/30 z-50">
         <div class="flex items-center justify-between px-4 py-3">
-            <div class="flex items-center gap-3">
+            <div onclick="adminClick()" class="flex items-center gap-3 cursor-pointer">
                 <div class="text-4xl">🥇</div>
                 <div>
                     <h1 class="text-3xl font-black neon">КРИПТО НАПЕРСТКИ</h1>
@@ -57,10 +57,10 @@
     <div class="pt-20 px-4 max-w-2xl mx-auto">
 
         <!-- ВІТАЛЬНИЙ БОНУС -->
-        <div id="bonus-card" class="bg-gradient-to-br from-orange-500 to-amber-600 rounded-3xl p-8 text-center mb-8 shadow-2xl">
+        <div class="bg-gradient-to-br from-orange-500 to-amber-600 rounded-3xl p-8 text-center mb-8 shadow-2xl">
             <h2 class="text-4xl font-black neon mb-2">ВІТАЛЬНИЙ БОНУС!</h2>
             <p class="text-2xl text-white/90">+100 TON на перший депозит</p>
-            <button onclick="claimBonus()" id="bonus-btn"
+            <button onclick="claimBonus()" id="bonus-btn" 
                     class="mt-6 w-full py-6 bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-black text-2xl rounded-3xl shadow-xl">
                 ЗАБРАТИ БОНУС
             </button>
@@ -91,7 +91,7 @@
             </button>
         </div>
 
-        <!-- СТАКАНЧИКИ (як на фото) -->
+        <!-- СТАКАНЧИКИ -->
         <div class="flex justify-center gap-8" id="cups-row">
             <div onclick="selectCup(0)" id="cup-0" class="cup text-center">
                 <div class="relative mx-auto w-28">
@@ -130,16 +130,34 @@
         <div id="status" class="text-center text-2xl font-bold text-yellow-300 mt-10 min-h-[48px]"></div>
     </div>
 
-    <!-- Нижні кнопки -->
+    <!-- Кнопки поповнення -->
     <div class="fixed bottom-6 left-4 right-4 flex gap-3 max-w-2xl mx-auto">
-        <button onclick="depositModal()" class="flex-1 py-6 bg-emerald-600 font-bold text-xl rounded-3xl">ПОПОВНИТИ</button>
-        <button onclick="withdrawModal()" class="flex-1 py-6 bg-zinc-700 font-bold text-xl rounded-3xl">ВИВЕСТИ</button>
+        <button onclick="payWithCryptoBot()" class="flex-1 py-6 bg-gradient-to-r from-blue-500 to-purple-600 font-bold text-xl rounded-3xl">
+            💎 CRYPTOBOT
+        </button>
+        <button onclick="depositTONManual()" class="flex-1 py-6 bg-emerald-600 font-bold text-xl rounded-3xl">
+            TON WALLET
+        </button>
+    </div>
+
+    <!-- АДМІН ПАНЕЛЬ -->
+    <div id="admin-panel" class="hidden fixed inset-0 bg-black/95 z-[100] flex items-center justify-center">
+        <div class="bg-zinc-900 rounded-3xl w-full max-w-md mx-4 p-8">
+            <h2 class="text-3xl font-bold text-center mb-6">🔧 АДМІН ПАНЕЛЬ</h2>
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm mb-2">Баланс</label>
+                    <input id="admin-balance" type="number" value="587.45" class="w-full bg-zinc-800 rounded-2xl p-4 text-2xl">
+                </div>
+                <button onclick="saveAdmin()" class="w-full py-5 bg-red-600 font-bold text-xl rounded-3xl">ЗБЕРЕГТИ</button>
+                <button onclick="closeAdmin()" class="w-full py-4 text-zinc-400">Закрити</button>
+            </div>
+        </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
+        tg.ready(); tg.expand();
 
         let balance = 587.45;
         let currentBet = 100;
@@ -147,13 +165,14 @@
         let isShuffling = false;
         let playerChoice = -1;
         let bonusClaimed = false;
+        let adminClicks = 0;
 
         function loadBalance() {
             document.getElementById('balance').textContent = balance.toFixed(2);
         }
 
         function claimBonus() {
-            if (bonusClaimed) return tg.showAlert("Бонус вже було забрано!");
+            if (bonusClaimed) return tg.showAlert("Бонус вже забрано!");
             bonusClaimed = true;
             balance += 100;
             loadBalance();
@@ -163,17 +182,20 @@
             btn.textContent = "БОНУС ЗАРАХОВАНО ✓";
         }
 
-        function depositModal() {
-            tg.showPopup({
-                title: "ПОПОВНЕННЯ",
-                message: "TON адреса:\nUQBTdndbuHIk_K6YkdLc1Spoy1Pg7l1NqT1dYpscq6J2n5rj",
-                buttons: [{ id: "sent", text: "Я НАДІСЛАВ" }]
-            }, () => tg.showAlert("✅ Запит відправлено адміну!"));
+        function payWithCryptoBot() {
+            const amount = prompt("Сума поповнення через CryptoBot (TON):", "50");
+            if (amount) {
+                tg.openTelegramLink(`https://t.me/CryptoBot?start=pay-${amount}`);
+                tg.showAlert(`✅ CryptoBot відкрито для оплати ${amount} TON`);
+            }
         }
 
-        function withdrawModal() {
-            const amount = prompt("Скільки TON вивести?", "200");
-            if (amount) tg.showAlert(`✅ Запит на вивід ${amount} TON прийнято`);
+        function depositTONManual() {
+            tg.showPopup({
+                title: "TON WALLET",
+                message: "Адреса для поповнення:\nUQBTdndbuHIk_K6YkdLc1Spoy1Pg7l1NqT1dYpscq6J2n5rj",
+                buttons: [{id: "sent", text: "Я НАДІСЛАВ"}]
+            }, () => tg.showAlert("✅ Запит відправлено адміну!"));
         }
 
         function changeBet(delta) {
@@ -188,16 +210,12 @@
 
         function startGame() {
             if (balance < currentBet) return tg.showAlert("❌ Недостатньо TON!");
-
             balance -= currentBet;
             loadBalance();
             isShuffling = true;
             playerChoice = -1;
-
-            document.getElementById('status').innerHTML = '🔥 Кладемо м’яч... <b>ПЕРЕМІШУЄМО!</b>';
-
+            document.getElementById('status').innerHTML = '🔥 Кладемо м’яч... Перемішуємо!';
             ballPosition = Math.random() < 0.35 ? Math.floor(Math.random() * 3) : Math.floor(Math.random() * 3);
-
             setTimeout(shuffleCups, 800);
         }
 
@@ -207,7 +225,6 @@
                 document.getElementById('cup-1'),
                 document.getElementById('cup-2')
             ];
-
             let count = 0;
             const interval = setInterval(() => {
                 count++;
@@ -216,13 +233,9 @@
                     const rot = Math.random() * 45 - 22;
                     cup.style.transform = `translateX(${x}px) rotate(${rot}deg)`;
                 });
-
                 if (count > 32) {
                     clearInterval(interval);
-                    cups.forEach(cup => {
-                        cup.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-                        cup.style.transform = '';
-                    });
+                    cups.forEach(cup => cup.style.transform = '');
                     document.getElementById('status').innerHTML = '👉 <b>Оберіть стаканчик!</b>';
                     isShuffling = false;
                 }
@@ -232,15 +245,13 @@
         function selectCup(index) {
             if (isShuffling || playerChoice !== -1) return;
             playerChoice = index;
-
             const won = ballPosition === index;
             if (won) {
                 balance += currentBet * 2;
                 loadBalance();
-                const winner = document.getElementById(`cup-${index}`);
-                winner.classList.add('winning-spin');
+                document.getElementById(`cup-${index}`).classList.add('winning-spin');
                 setTimeout(() => {
-                    winner.classList.remove('winning-spin');
+                    document.getElementById(`cup-${index}`).classList.remove('winning-spin');
                     tg.showAlert(`🎉 ВИГРАШ! +${currentBet * 2} TON`);
                 }, 1400);
             } else {
@@ -252,9 +263,31 @@
             tg.showAlert(`💰 Ваш баланс: ${balance.toFixed(2)} TON`);
         }
 
+        // Адмін-панель
+        function adminClick() {
+            adminClicks++;
+            if (adminClicks >= 3) {
+                document.getElementById('admin-panel').classList.remove('hidden');
+                adminClicks = 0;
+            }
+            setTimeout(() => adminClicks = 0, 800);
+        }
+
+        function saveAdmin() {
+            const newBal = parseFloat(document.getElementById('admin-balance').value);
+            if (newBal) balance = newBal;
+            loadBalance();
+            tg.showAlert("✅ Збережено");
+            closeAdmin();
+        }
+
+        function closeAdmin() {
+            document.getElementById('admin-panel').classList.add('hidden');
+        }
+
         window.onload = () => {
             loadBalance();
-            console.log('%c🚀 Крипто Наперстки — повна версія готова!', 'color:#22ff88;font-size:18px');
+            console.log('%c🚀 Повна версія з CryptoBot готова!', 'color:#22ff88;font-size:18px');
         };
     </script>
 </body>
