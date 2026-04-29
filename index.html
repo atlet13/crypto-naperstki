@@ -8,59 +8,72 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
-        body { background: linear-gradient(180deg, #0f0a1f 0%, #1a0033 100%); font-family: 'Inter', sans-serif; color: white; }
-        .neon { text-shadow: 0 0 20px #22ff88, 0 0 40px #22ff88, 0 0 60px #ff00ff; }
-        .glass { background: linear-gradient(145deg, #fbbf24, #f59e0b, #ea580c); box-shadow: 0 25px 50px -12px rgb(245 158 11 / 0.6); }
-        .cup { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-        .cup:hover { transform: scale(1.2) rotate(15deg); }
-        .winning-spin { animation: winSpin 0.6s linear infinite; }
-        @keyframes winSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .ticker { overflow: hidden; white-space: nowrap; }
-        .ticker-content { animation: ticker 25s linear infinite; }
-        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        
+        body {
+            background: linear-gradient(180deg, #0a0a0a 0%, #1a0033 100%);
+            font-family: 'Inter', sans-serif;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .neon {
+            text-shadow: 0 0 20px #fff, 0 0 40px #ffd700;
+        }
+        
+        .cup {
+            transition: transform 0.08s linear;
+            filter: drop-shadow(0 20px 25px rgba(0,0,0,0.6));
+        }
+        
+        .winning-spin {
+            animation: winSpin 0.65s linear infinite;
+        }
+        
+        @keyframes winSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="min-h-screen pb-28">
 
     <!-- HEADER -->
-    <div class="fixed top-0 left-0 right-0 bg-black/95 border-b border-emerald-500/40 z-50">
+    <div class="fixed top-0 left-0 right-0 bg-black/90 border-b border-yellow-400/30 z-50">
         <div class="flex items-center justify-between px-4 py-3">
             <div class="flex items-center gap-3">
-                <div class="text-5xl">🥇</div>
+                <div class="text-4xl">🥇</div>
                 <div>
                     <h1 class="text-3xl font-black neon">КРИПТО НАПЕРСТКИ</h1>
-                    <p class="text-emerald-400 -mt-1">TON • x2 • LIVE</p>
+                    <p class="text-emerald-400 text-sm -mt-1">TON • x2 • LIVE</p>
                 </div>
             </div>
-            <div onclick="showBalance()" class="bg-zinc-900 border border-emerald-400 rounded-3xl px-5 py-2 flex items-center gap-3 cursor-pointer">
-                <span class="text-4xl">₮</span>
-                <span id="balance" class="font-black text-4xl text-emerald-400">587.45</span>
+            <div onclick="showBalance()" class="bg-zinc-900 border border-emerald-400 rounded-3xl px-6 py-2 flex items-center gap-2 cursor-pointer">
+                <span class="text-3xl">₮</span>
+                <span id="balance" class="font-black text-3xl text-emerald-400">587.45</span>
             </div>
         </div>
-    </div>
-
-    <!-- LIVE TICKER -->
-    <div class="ticker bg-gradient-to-r from-purple-900 to-emerald-900 py-2 text-sm font-medium border-b border-emerald-500/30">
-        <div id="ticker-content" class="ticker-content flex items-center gap-12 text-emerald-300"></div>
     </div>
 
     <div class="pt-20 px-4 max-w-2xl mx-auto">
 
-        <!-- БОНУС -->
-        <div class="bg-gradient-to-br from-amber-500 via-orange-600 to-red-600 rounded-3xl p-8 text-center mb-8 shadow-2xl">
+        <!-- ВІТАЛЬНИЙ БОНУС -->
+        <div id="bonus-card" class="bg-gradient-to-br from-orange-500 to-amber-600 rounded-3xl p-8 text-center mb-8 shadow-2xl">
             <h2 class="text-4xl font-black neon mb-2">ВІТАЛЬНИЙ БОНУС!</h2>
-            <p class="text-2xl">+100 TON на перший депозит</p>
-            <button onclick="claimBonus()" class="mt-6 w-full py-6 bg-white text-black font-black text-2xl rounded-3xl">ЗАБРАТИ БОНУС</button>
+            <p class="text-2xl text-white/90">+100 TON на перший депозит</p>
+            <button onclick="claimBonus()" id="bonus-btn"
+                    class="mt-6 w-full py-6 bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-black text-2xl rounded-3xl shadow-xl">
+                ЗАБРАТИ БОНУС
+            </button>
         </div>
 
         <!-- СТАВКА -->
-        <div class="bg-zinc-900/95 rounded-3xl p-6 mb-8 border border-yellow-400/30">
-            <div class="flex justify-between items-center mb-4">
+        <div class="bg-zinc-900/90 rounded-3xl p-6 mb-8">
+            <div class="flex justify-between items-center mb-5">
                 <span class="text-xl">Ставка</span>
                 <div class="flex items-center gap-6">
-                    <button onclick="changeBet(-25)" class="w-16 h-16 bg-zinc-800 rounded-3xl text-5xl">-</button>
+                    <button onclick="changeBet(-25)" class="w-16 h-16 bg-zinc-800 rounded-3xl text-5xl font-bold">-</button>
                     <div id="bet-amount" class="text-7xl font-black text-yellow-400 w-36 text-center">100</div>
-                    <button onclick="changeBet(25)" class="w-16 h-16 bg-zinc-800 rounded-3xl text-5xl">+</button>
+                    <button onclick="changeBet(25)" class="w-16 h-16 bg-zinc-800 rounded-3xl text-5xl font-bold">+</button>
                 </div>
                 <span class="text-emerald-400 text-2xl">TON</span>
             </div>
@@ -73,43 +86,48 @@
                 <button onclick="setBet(250)" class="py-5 bg-zinc-800 rounded-2xl">250</button>
             </div>
 
-            <button onclick="startGame()" class="mt-8 w-full py-7 bg-gradient-to-r from-orange-500 to-yellow-500 text-black font-black text-3xl rounded-3xl flex items-center justify-center gap-4">
+            <button onclick="startGame()" class="mt-8 w-full py-7 bg-gradient-to-r from-orange-500 to-yellow-500 text-black font-black text-3xl rounded-3xl">
                 🚀 ГРАТИ ЗА TON
             </button>
         </div>
 
-        <!-- СТАКАНЧИКИ -->
-        <div class="flex justify-center gap-10 mb-6" id="cups-row">
+        <!-- СТАКАНЧИКИ (як на фото) -->
+        <div class="flex justify-center gap-8" id="cups-row">
             <div onclick="selectCup(0)" id="cup-0" class="cup text-center">
-                <div class="glass w-32 h-44 rounded-3xl border-4 border-white/50 flex items-center justify-center relative mx-auto">
-                    <div class="absolute -top-4 bg-gradient-to-r from-cyan-400 to-purple-500 text-xs font-bold px-8 py-1 rounded-3xl">TON x2</div>
-                    <div class="text-8xl drop-shadow-2xl">₮</div>
+                <div class="relative mx-auto w-28">
+                    <div class="bg-gradient-to-b from-orange-400 via-orange-500 to-orange-600 h-36 rounded-t-3xl border-4 border-white/30 relative overflow-hidden">
+                        <div class="absolute top-6 left-1/2 -translate-x-1/2 w-16 h-6 bg-gradient-to-r from-yellow-300 to-amber-300 rounded"></div>
+                        <div class="absolute top-14 left-1/2 -translate-x-1/2 w-20 h-5 bg-white/30 rounded"></div>
+                    </div>
+                    <div class="bg-white h-8 w-28 mx-auto -mt-1 rounded-b-3xl border border-orange-700"></div>
                 </div>
-                <div class="mt-4 text-xl">1</div>
+                <div class="mt-3 text-xl font-medium">1</div>
             </div>
+
             <div onclick="selectCup(1)" id="cup-1" class="cup text-center scale-110">
-                <div class="glass w-32 h-44 rounded-3xl border-4 border-white/50 flex items-center justify-center relative mx-auto">
-                    <div class="absolute -top-4 bg-gradient-to-r from-cyan-400 to-purple-500 text-xs font-bold px-8 py-1 rounded-3xl">TON x2</div>
-                    <div class="text-8xl drop-shadow-2xl">₮</div>
+                <div class="relative mx-auto w-28">
+                    <div class="bg-gradient-to-b from-orange-400 via-orange-500 to-orange-600 h-36 rounded-t-3xl border-4 border-white/30 relative overflow-hidden">
+                        <div class="absolute top-6 left-1/2 -translate-x-1/2 w-16 h-6 bg-gradient-to-r from-yellow-300 to-amber-300 rounded"></div>
+                        <div class="absolute top-14 left-1/2 -translate-x-1/2 w-20 h-5 bg-white/30 rounded"></div>
+                    </div>
+                    <div class="bg-white h-8 w-28 mx-auto -mt-1 rounded-b-3xl border border-orange-700"></div>
                 </div>
-                <div class="mt-4 text-xl">2</div>
+                <div class="mt-3 text-xl font-medium">2</div>
             </div>
+
             <div onclick="selectCup(2)" id="cup-2" class="cup text-center">
-                <div class="glass w-32 h-44 rounded-3xl border-4 border-white/50 flex items-center justify-center relative mx-auto">
-                    <div class="absolute -top-4 bg-gradient-to-r from-cyan-400 to-purple-500 text-xs font-bold px-8 py-1 rounded-3xl">TON x2</div>
-                    <div class="text-8xl drop-shadow-2xl">₮</div>
+                <div class="relative mx-auto w-28">
+                    <div class="bg-gradient-to-b from-orange-400 via-orange-500 to-orange-600 h-36 rounded-t-3xl border-4 border-white/30 relative overflow-hidden">
+                        <div class="absolute top-6 left-1/2 -translate-x-1/2 w-16 h-6 bg-gradient-to-r from-yellow-300 to-amber-300 rounded"></div>
+                        <div class="absolute top-14 left-1/2 -translate-x-1/2 w-20 h-5 bg-white/30 rounded"></div>
+                    </div>
+                    <div class="bg-white h-8 w-28 mx-auto -mt-1 rounded-b-3xl border border-orange-700"></div>
                 </div>
-                <div class="mt-4 text-xl">3</div>
+                <div class="mt-3 text-xl font-medium">3</div>
             </div>
         </div>
 
-        <div id="status" class="text-center text-2xl font-bold text-yellow-300 min-h-[48px]"></div>
-
-        <!-- Історія ігор -->
-        <div class="mt-10">
-            <h3 class="text-center text-emerald-400 mb-3">ОСТАННІ ВИГРАШІ</h3>
-            <div id="history" class="space-y-2 text-sm"></div>
-        </div>
+        <div id="status" class="text-center text-2xl font-bold text-yellow-300 mt-10 min-h-[48px]"></div>
     </div>
 
     <!-- Нижні кнопки -->
@@ -120,141 +138,123 @@
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.ready(); tg.expand();
+        tg.ready();
+        tg.expand();
 
         let balance = 587.45;
         let currentBet = 100;
         let ballPosition = -1;
         let isShuffling = false;
         let playerChoice = -1;
-
-        // Звуки
-        const winSound = new Audio('https://assets.mixkit.co/sfx/preview/2967/2967.wav');
-        const loseSound = new Audio('https://assets.mixkit.co/sfx/preview/2952/2952.wav');
-
-        const fakeWins = [
-            "@tonhunter_ua виграв 420 TON",
-            "@crypto_king42 виграв 850 TON",
-            "@lucky_whale x2 на 250 TON",
-            "@naprstki_pro +680 TON",
-            "@ua_ton_boss забрав 1250 TON"
-        ];
-
-        function startTicker() {
-            const ticker = document.getElementById('ticker-content');
-            fakeWins.forEach(w => {
-                const el = document.createElement('div');
-                el.className = "flex-shrink-0 px-8";
-                el.textContent = w;
-                ticker.appendChild(el);
-            });
-            fakeWins.forEach(w => {
-                const el = document.createElement('div');
-                el.className = "flex-shrink-0 px-8";
-                el.textContent = w;
-                ticker.appendChild(el);
-            });
-        }
-
-        function addToHistory(won, amount) {
-            const hist = document.getElementById('history');
-            const entry = document.createElement('div');
-            entry.className = `flex justify-between px-4 py-3 rounded-2xl ${won ? 'bg-emerald-900/50' : 'bg-red-900/30'}`;
-            entry.innerHTML = `
-                <span>${won ? '🎉' : '😢'} Ставка ${currentBet} TON</span>
-                <span class="${won ? 'text-emerald-400' : 'text-red-400'} font-bold">${won ? '+' : '-'}${amount} TON</span>
-            `;
-            hist.prepend(entry);
-            if (hist.children.length > 5) hist.lastChild.remove();
-        }
+        let bonusClaimed = false;
 
         function loadBalance() {
             document.getElementById('balance').textContent = balance.toFixed(2);
         }
 
-        function depositModal() {
-            tg.showPopup({ title: "ПОПОВНЕННЯ", message: "TON адреса:\nUQBTdndbuHIk_K6YkdLc1Spoy1Pg7l1NqT1dYpscq6J2n5rj", buttons: [{id:"ok", text:"Я НАДІСЛАВ"}] }, () => {
-                tg.showAlert("✅ Запит на поповнення відправлено адміну!");
-            });
-        }
-
-        function withdrawModal() {
-            const amount = prompt("Сума для виведення:", "200");
-            if (amount) tg.showAlert(`✅ Запит на вивід ${amount} TON прийнято. Очікуйте підтвердження.`);
-        }
-
         function claimBonus() {
+            if (bonusClaimed) return tg.showAlert("Бонус вже було забрано!");
+            bonusClaimed = true;
             balance += 100;
             loadBalance();
             tg.showAlert("🎉 +100 TON бонус успішно зараховано!");
+            const btn = document.getElementById('bonus-btn');
+            btn.style.opacity = "0.5";
+            btn.textContent = "БОНУС ЗАРАХОВАНО ✓";
         }
 
-        function changeBet(d) { currentBet = Math.max(10, Math.min(500, currentBet + d)); document.getElementById('bet-amount').textContent = currentBet; }
-        function setBet(v) { currentBet = v; document.getElementById('bet-amount').textContent = currentBet; }
+        function depositModal() {
+            tg.showPopup({
+                title: "ПОПОВНЕННЯ",
+                message: "TON адреса:\nUQBTdndbuHIk_K6YkdLc1Spoy1Pg7l1NqT1dYpscq6J2n5rj",
+                buttons: [{ id: "sent", text: "Я НАДІСЛАВ" }]
+            }, () => tg.showAlert("✅ Запит відправлено адміну!"));
+        }
+
+        function withdrawModal() {
+            const amount = prompt("Скільки TON вивести?", "200");
+            if (amount) tg.showAlert(`✅ Запит на вивід ${amount} TON прийнято`);
+        }
+
+        function changeBet(delta) {
+            currentBet = Math.max(10, Math.min(500, currentBet + delta));
+            document.getElementById('bet-amount').textContent = currentBet;
+        }
+
+        function setBet(val) {
+            currentBet = val;
+            document.getElementById('bet-amount').textContent = currentBet;
+        }
 
         function startGame() {
-            if (balance < currentBet) return tg.showAlert("❌ Недостатньо коштів!");
+            if (balance < currentBet) return tg.showAlert("❌ Недостатньо TON!");
 
             balance -= currentBet;
             loadBalance();
             isShuffling = true;
             playerChoice = -1;
 
-            document.getElementById('status').innerHTML = '🔥 Кладемо м’яч під стаканчик...';
+            document.getElementById('status').innerHTML = '🔥 Кладемо м’яч... <b>ПЕРЕМІШУЄМО!</b>';
 
-            ballPosition = Math.random() < 0.35 ? Math.floor(Math.random()*3) : Math.floor(Math.random()*3);
+            ballPosition = Math.random() < 0.35 ? Math.floor(Math.random() * 3) : Math.floor(Math.random() * 3);
 
-            setTimeout(shuffleCups, 1300);
+            setTimeout(shuffleCups, 800);
         }
 
         function shuffleCups() {
+            const cups = [
+                document.getElementById('cup-0'),
+                document.getElementById('cup-1'),
+                document.getElementById('cup-2')
+            ];
+
             let count = 0;
-            const int = setInterval(() => {
+            const interval = setInterval(() => {
                 count++;
-                document.querySelectorAll('.cup').forEach(cup => {
-                    cup.style.transform = `translateX(${Math.random()*80-40}px) rotate(${Math.random()*45-22}deg)`;
+                cups.forEach(cup => {
+                    const x = Math.random() * 120 - 60;
+                    const rot = Math.random() * 45 - 22;
+                    cup.style.transform = `translateX(${x}px) rotate(${rot}deg)`;
                 });
-                if (count > 30) {
-                    clearInterval(int);
-                    document.querySelectorAll('.cup').forEach(c => c.style.transform = '');
+
+                if (count > 32) {
+                    clearInterval(interval);
+                    cups.forEach(cup => {
+                        cup.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                        cup.style.transform = '';
+                    });
                     document.getElementById('status').innerHTML = '👉 <b>Оберіть стаканчик!</b>';
                     isShuffling = false;
                 }
             }, 70);
         }
 
-        function selectCup(i) {
+        function selectCup(index) {
             if (isShuffling || playerChoice !== -1) return;
-            playerChoice = i;
+            playerChoice = index;
 
-            const won = ballPosition === i;
-            const winAmount = currentBet * 2;
-
+            const won = ballPosition === index;
             if (won) {
-                balance += winAmount;
+                balance += currentBet * 2;
                 loadBalance();
-                winSound.play();
-                document.getElementById(`cup-${i}`).classList.add('winning-spin');
+                const winner = document.getElementById(`cup-${index}`);
+                winner.classList.add('winning-spin');
                 setTimeout(() => {
-                    document.getElementById(`cup-${i}`).classList.remove('winning-spin');
-                    tg.showAlert(`🎉 ВЕЛИКИЙ ВИГРАШ! +${winAmount} TON`);
+                    winner.classList.remove('winning-spin');
+                    tg.showAlert(`🎉 ВИГРАШ! +${currentBet * 2} TON`);
                 }, 1400);
             } else {
-                loseSound.play();
-                tg.showAlert('😢 Не цього разу...');
+                tg.showAlert('😢 М’яч був під іншим стаканчиком...');
             }
-
-            addToHistory(won, won ? winAmount : currentBet);
         }
 
         function showBalance() {
-            tg.showAlert(`💰 Баланс: ${balance.toFixed(2)} TON`);
+            tg.showAlert(`💰 Ваш баланс: ${balance.toFixed(2)} TON`);
         }
 
         window.onload = () => {
             loadBalance();
-            startTicker();
-            console.log('%c🚀 Крипто Наперстки — МАКСИМАЛЬНА ВЕРСІЯ запущена!', 'color:#22ff88; font-size:20px; font-weight:bold');
+            console.log('%c🚀 Крипто Наперстки — повна версія готова!', 'color:#22ff88;font-size:18px');
         };
     </script>
 </body>
